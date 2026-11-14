@@ -6,7 +6,7 @@ Projeto desenvolvido para a disciplina de **Programação Orientada a Objetos (I
 
 ## 📐 Diagrama de Classes / Modelagem (UML)
 
-![Diagrama UML da Loja de Doces](<img width="1202" height="505" alt="Modelagem_Byte_ _Brigadeiro drawio" src="https://github.com/user-attachments/assets/48f1610a-f23d-4764-aa6f-3d59f1271c8f" />)
+![Diagrama UML da Loja de Doces](https://github.com/user-attachments/assets/48f1610a-f23d-4764-aa6f-3d59f1271c8f)
 
 ---
 
