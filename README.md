@@ -32,6 +32,6 @@ O projeto está dividido em quatro frentes de implementação na camada de domí
 ## 👥 Integrantes do Grupo
 
 * **Pessoa A:** Isadora da Silva Bispo *(Liderança de modelagem, Cliente e Enums)*
-* **Pessoa B:** [Nome do Integrante B] *(Categoria e Fornecedor)*
-* **Pessoa C:** [Nome do Integrante C] *(Pedido e ItemPedido)*
-* **Pessoa D:** [Nome do Integrante D] *(Hierarquia de Produto)*
+* **Pessoa B:** Mariana Cristina dos Santos *(Categoria e Fornecedor)*
+* **Pessoa C:** Maria Fernanda Ribeiro Tavares *(Pedido e ItemPedido)*
+* **Pessoa D:** Lívia Campanholo *(Hierarquia de Produto)*
