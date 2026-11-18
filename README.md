@@ -1,3 +1,4 @@
+
 # 🍬 Sistema de Gestão - Loja de Doces
 
 Projeto desenvolvido para a disciplina de **Programação Orientada a Objetos (ILP007)** da **FATEC Ribeirão Preto**. O sistema modela o domínio de uma loja de doces, abrangendo o controle de clientes, fornecedores, catálogo de produtos (unitários, por peso e kits) e fluxo de pedidos.
@@ -6,7 +7,8 @@ Projeto desenvolvido para a disciplina de **Programação Orientada a Objetos (I
 
 ## 📐 Diagrama de Classes / Modelagem (UML)
 
-![Diagrama UML da Loja de Doces](https://github.com/user-attachments/assets/48f1610a-f23d-4764-aa6f-3d59f1271c8f)
+<img width="2122" height="1069" alt="Modelagem_Byte_ _Brigadeiro_Final drawio" src="https://github.com/user-attachments/assets/3b4c21e3-4a98-4c1b-97e0-67465bccaee1" />
+
 
 ---
 
