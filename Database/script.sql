@@ -3,6 +3,14 @@
 -- Quero que justamente o insert não surja de 5, 10, 15... (Utilizamos o Insert or ignore into)
 -- Decidido colocar o Collate nocase especifico no nome da categoria, porque assim não há duplicatas de 'Bolos' e 'bolos'
 
+DROP TABLE IF EXISTS ItensPedido;
+DROP TABLE IF EXISTS KitItens;
+DROP TABLE IF EXISTS Pedidos;
+DROP TABLE IF EXISTS Produtos;
+DROP TABLE IF EXISTS Clientes;
+DROP TABLE IF EXISTS Fornecedores;
+DROP TABLE IF EXISTS Categorias;
+
 
 CREATE TABLE IF NOT EXISTS Categorias(
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +46,7 @@ INSERT OR IGNORE INTO Categorias (Nome) VALUES
 
 -- Insert para Fornecedores
 INSERT OR IGNORE INTO Fornecedores (Nome, Cnpj, Email, Telefone) VALUES
-    ('Doces da Vovó Ltda', '11.222.333/4444-22', 'docesdavovô@exemplo.com', '(16)11222-4433'),
+    ('Doces da Vovó Ltda', '11.222.333/4444-22', 'docesdavovo@exemplo.com', '(16)11222-4433'),
     ('MarDoces', '55.444.777/9999-11', 'Mar&DocesOficial@exemplo.com', '(55)16333-7798'),
     ('DoceriAnna', '32.412.767/0976-32', 'DoceriAnna233456@exemplo.com', '(66)76653-2211'),
     ('Xangai Doces', '66.478.112/7643-00', 'XangaiDocesOriniri@exemplo.com', '(16)67809-1122'),
@@ -51,3 +59,43 @@ INSERT OR IGNORE INTO Clientes (Nome, Email, Telefone, Cpf, Tipo) VALUES
     ('Lucas Almeida Costa', 'lucas.costa@exemplo.com.br', '(11)90000-1122', '104.332.181-00', 'Vip'),
     ('Beatriz Monteiro Cardoso', 'beatriz.cardoso@teste.org', '(21)90000-4354', '960.013.389-14', 'Comum'),
     ('Manuela Ramos Farias', 'manuela.farias@teste.com.br', '(19)90000-1357', '350.305.641-60', 'Comum');
+
+CREATE TABLE IF NOT EXISTS Produtos(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    Nome TEXT NOT NULL,
+    Tipo TEXT NOT NULL,
+    Preco REAL NOT NULL DEFAULT 0,
+    Estoque REAL NOT NULL DEFAULT 0,
+    CategoriaId INTEGER NOT NULL,
+    FornecedorId INTEGER NOT NULL,
+    FOREIGN KEY (CategoriaId) REFERENCES Categorias(Id),
+    FOREIGN KEY (FornecedorId) REFERENCES Fornecedores(Id)
+);
+
+CREATE TABLE IF NOT EXISTS Pedidos(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ClienteId INTEGER NOT NULL,
+    DataPedido TEXT NOT NULL,
+    Status TEXT NOT NULL,
+    FormaPagamento TEXT NOT NULL CHECK(FormaPagamento IN('Pix', 'Cartão - Débito', 'Cartão - Crédito', 'Dinheiro')),
+    FOREIGN KEY (ClienteId) REFERENCES Clientes(Id)
+);
+
+CREATE TABLE IF NOT EXISTS KitItens(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    KitId INTEGER NOT NULL,
+    ProdutoId INTEGER NOT NULL,
+    Quantidade INTEGER NOT NULL DEFAULT 1,
+    FOREIGN KEY (KitId) REFERENCES Produtos(Id),
+    FOREIGN KEY (ProdutoId) REFERENCES Produtos(Id)
+);
+
+CREATE TABLE IF NOT EXISTS ItensPedido(
+    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+    PedidoId INTEGER NOT NULL,
+    ProdutoId INTEGER NOT NULL,
+    Quantidade REAL NOT NULL,
+    PrecoUnitario REAL NOT NULL,
+    FOREIGN KEY (PedidoId) REFERENCES Pedidos(Id),
+    FOREIGN KEY (ProdutoId) REFERENCES Produtos(Id)
+);
