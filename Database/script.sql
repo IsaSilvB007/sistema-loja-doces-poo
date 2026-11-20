@@ -1,8 +1,3 @@
--- REGRAS QUE DECIDI IMPLEMENTAR E QUERO CITAR APÓS NO README:
--- Decidi colocar o Unique como regra
--- Quero que justamente o insert não surja de 5, 10, 15... (Utilizamos o Insert or ignore into)
--- Decidido colocar o Collate nocase especifico no nome da categoria, porque assim não há duplicatas de 'Bolos' e 'bolos'
-
 DROP TABLE IF EXISTS ItensPedido;
 DROP TABLE IF EXISTS KitItens;
 DROP TABLE IF EXISTS Pedidos;
