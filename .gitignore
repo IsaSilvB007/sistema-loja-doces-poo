@@ -426,3 +426,6 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+# Banco de dados local (cada pessoa gera o seu a partir do script.sql)
+*.db
