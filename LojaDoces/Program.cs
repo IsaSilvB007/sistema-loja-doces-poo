@@ -9,9 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Repositórios 
-//builder.Services.AddScoped<IRepository<Cliente>, ClienteRepository>();
+builder.Services.AddScoped<IRepository<Cliente>, ClienteRepository>();
 builder.Services.AddScoped<IRepository<Categoria>, CategoriaRepository>();
-//builder.Services.AddScoped<IRepository<Fornecedor>, FornecedorRepository>();
+builder.Services.AddScoped<IRepository<Fornecedor>, FornecedorRepository>();
 
 var app = builder.Build();
 
