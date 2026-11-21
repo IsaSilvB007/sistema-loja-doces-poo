@@ -1,7 +1,17 @@
+using LojaDoces.Models;
+using LojaDoces.Repositories;
+using LojaDoces.Repositories.Interfaces;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+// Repositórios 
+//builder.Services.AddScoped<IRepository<Cliente>, ClienteRepository>();
+builder.Services.AddScoped<IRepository<Categoria>, CategoriaRepository>();
+//builder.Services.AddScoped<IRepository<Fornecedor>, FornecedorRepository>();
 
 var app = builder.Build();
 
