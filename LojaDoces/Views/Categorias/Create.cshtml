@@ -1,0 +1,11 @@
+@model LojaDoces.ViewModels.CategoriaViewModel
+@{ ViewData["Title"] = "Nova categoria"; }
+
+<h1>Nova categoria</h1>
+<form asp-action="Create" method="post">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
