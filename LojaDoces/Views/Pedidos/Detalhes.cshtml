@@ -1,0 +1,65 @@
+@using LojaDoces.Models.Enums
+@model LojaDoces.Models.ViewModels.PedidoDetalhesViewModel
+@{
+    ViewData["Title"] = $"Pedido #{Model.Pedido.Id}";
+    var aberto = Model.Pedido.Status == StatusPedido.Aberto;
+}
+
+<h2>Pedido #@Model.Pedido.Id</h2>
+<p><strong>Cliente:</strong> @Model.ClienteNome |
+   <strong>Status:</strong> @Model.Pedido.Status |
+   <strong>Data:</strong> @Model.Pedido.DataCriacao.ToString("dd/MM/yyyy HH:mm")</p>
+
+<table class="table">
+    <thead><tr><th>Produto</th><th>Qtd</th><th>Preço unit.</th><th>Subtotal</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var item in Model.Pedido.Itens)
+    {
+        <tr>
+            <td>@item.NomeProduto</td>
+            <td>@item.Quantidade</td>
+            <td>@item.PrecoUnitario.ToString("C")</td>
+            <td>@item.Subtotal.ToString("C")</td>
+            <td>
+                @if (aberto)
+                {
+                    <form asp-action="RemoverItem" asp-route-id="@Model.Pedido.Id"
+                          asp-route-produtoId="@item.ProdutoId" method="post">
+                        <button class="btn btn-sm btn-outline-danger">Remover</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+    <tfoot>
+        <tr><th colspan="3" class="text-end">Total</th><th>@Model.Pedido.Total.ToString("C")</th><th></th></tr>
+    </tfoot>
+</table>
+
+@if (aberto)
+{
+    <h5>Adicionar item</h5>
+    <form asp-action="AdicionarItem" method="post" class="row g-2 mb-4">
+        <input type="hidden" name="PedidoId" value="@Model.Pedido.Id" />
+        <div class="col-md-6">
+            <select name="ProdutoId" asp-items="Model.Produtos" class="form-select">
+                <option value="">Selecione o produto...</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <input name="Quantidade" type="number" min="1" value="1" class="form-control" />
+        </div>
+        <div class="col-md-2"><button class="btn btn-primary">Adicionar</button></div>
+    </form>
+}
+
+<div class="d-flex gap-2">
+    <form asp-action="Pagar" asp-route-id="@Model.Pedido.Id" method="post">
+        <button class="btn btn-success">Pagar</button>
+    </form>
+    <form asp-action="Cancelar" asp-route-id="@Model.Pedido.Id" method="post">
+        <button class="btn btn-warning">Cancelar pedido</button>
+    </form>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</div>

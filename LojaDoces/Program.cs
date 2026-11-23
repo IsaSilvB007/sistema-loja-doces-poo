@@ -1,7 +1,7 @@
 using LojaDoces.Models;
 using LojaDoces.Repositories;
 using LojaDoces.Repositories.Interfaces;
-
+using LojaDoces.Repositories.Dapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IRepository<Cliente>, ClienteRepository>();
 builder.Services.AddScoped<IRepository<Categoria>, CategoriaRepository>();
 builder.Services.AddScoped<IRepository<Fornecedor>, FornecedorRepository>();
+builder.Services.AddScoped<IPedidoRepository, PedidoRepository>();
 
 var app = builder.Build();
 
