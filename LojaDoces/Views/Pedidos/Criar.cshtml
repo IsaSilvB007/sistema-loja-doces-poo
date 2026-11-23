@@ -1,0 +1,18 @@
+@model LojaDoces.Models.ViewModels.CriarPedidoViewModel
+@{ ViewData["Title"] = "Novo pedido"; }
+
+<h2>Novo pedido</h2>
+<form asp-action="Criar" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="ClienteId" class="form-label"></label>
+        <select asp-for="ClienteId" asp-items="Model.Clientes" class="form-select">
+            <option value="">Selecione...</option>
+        </select>
+        <span asp-validation-for="ClienteId" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Criar pedido</button>
+    <a asp-action="Index" class="btn btn-secondary">Voltar</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }
