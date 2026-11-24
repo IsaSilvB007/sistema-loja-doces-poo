@@ -1,0 +1,154 @@
+@model IEnumerable<LojaDoces.Models.Produto>
+@{
+    ViewData["Title"] = "Produtos";
+    var quantidadeSimulada = ViewBag.QuantidadeSimulada is decimal q ? q : 1m;
+    var categorias = ViewBag.Categorias as IDictionary<int, string> ?? new Dictionary<int, string>();
+    var fornecedores = ViewBag.Fornecedores as IDictionary<int, string> ?? new Dictionary<int, string>();
+}
+
+<style>
+    .card-loja {
+        border: 1px solid #ece6ef;
+        border-radius: 14px;
+        box-shadow: 0 6px 20px rgba(45, 24, 54, 0.06);
+        background: #fff;
+    }
+    .badge-tipo {
+        font-size: 0.78rem;
+        padding: 0.35em 0.65em;
+        border-radius: 999px;
+        font-weight: 600;
+    }
+    .tipo-unitario { background-color: #e7f1ff; color: #0b5ed7; }
+    .tipo-peso { background-color: #fff3cd; color: #856404; }
+    .tipo-kit { background-color: #f3e5f5; color: #6a1b9a; }
+    .preco-calculado {
+        font-weight: 700;
+        color: #198754;
+    }
+    .estoque-baixo {
+        color: #dc3545;
+        font-weight: 600;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+        <div>
+            <h2 class="mb-1">Produtos &amp; Polimorfismo</h2>
+            <p class="text-muted mb-0">Preço calculado dinamicamente via <code>CalcularPreco()</code> por tipo de doce.</p>
+        </div>
+        <a asp-action="Criar" class="btn btn-primary">+ Novo Produto</a>
+    </div>
+
+    @if (TempData["MensagemErro"] is string erroMsg)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Atenção:</strong> @erroMsg
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    }
+
+    @if (TempData["MensagemSucesso"] is string sucessoMsg)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @sucessoMsg
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        </div>
+    }
+
+    <div class="card-loja p-3 mb-4">
+        <form method="get" asp-action="Index" class="row g-2 align-items-end">
+            <div class="col-sm-6 col-md-4">
+                <label for="quantidadeSimulada" class="form-label fw-semibold">Quantidade / Peso para calcular preço</label>
+                <input type="text" inputmode="decimal" name="quantidadeSimulada" id="quantidadeSimulada"
+                       value="@quantidadeSimulada.ToString("0.##")" class="form-control" />
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-outline-dark">Recalcular Preços</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card-loja p-3">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Tipo</th>
+                        <th>Categoria</th>
+                        <th>Fornecedor</th>
+                        <th>Preço Base</th>
+                        <th>CalcularPreco (@quantidadeSimulada.ToString("0.##"))</th>
+                        <th>Estoque</th>
+                        <th class="text-end">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (!Model.Any())
+                    {
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                Nenhum produto cadastrado ainda. Clique em <strong>+ Novo Produto</strong> para começar.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var item in Model)
+                        {
+                            var classeBadge = item.Tipo switch
+                            {
+                                "DoceUnitario" => "tipo-unitario",
+                                "DocePorPeso" => "tipo-peso",
+                                "KitPresente" => "tipo-kit",
+                                _ => "bg-secondary text-white"
+                            };
+                            var semEstoque = item.Estoque <= 0 || item.Estoque < quantidadeSimulada;
+                            var precoCalculado = item.CalcularPreco(quantidadeSimulada);
+
+                            <tr>
+                                <td class="fw-semibold">@item.Nome</td>
+                                <td><span class="badge-tipo @classeBadge">@item.Tipo</span></td>
+                                <td>@(categorias.TryGetValue(item.CategoriaId, out var catNome) ? catNome : $"#{item.CategoriaId}")</td>
+                                <td>@(fornecedores.TryGetValue(item.FornecedorId, out var fornNome) ? fornNome : $"#{item.FornecedorId}")</td>
+                                <td>@item.Preco.ToString("C")</td>
+                                <td class="preco-calculado">@precoCalculado.ToString("C")</td>
+                                <td class="@(semEstoque ? "estoque-baixo" : "")">
+                                    @item.Estoque.ToString("0.##")
+                                    @if (item.Estoque <= 0)
+                                    {
+                                        <span class="badge bg-danger ms-1">Sem estoque</span>
+                                    }
+                                    else if (item.Estoque < quantidadeSimulada)
+                                    {
+                                        <span class="badge bg-warning text-dark ms-1">Insuficiente</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <form asp-action="SimularConsumo" method="post" class="d-inline">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@item.Id" />
+                                            <input type="hidden" name="quantidade" value="@quantidadeSimulada.ToString("0.##")" />
+                                            <button type="submit" class="btn btn-sm btn-outline-success" title="Testar estoque e preço">
+                                                Testar
+                                            </button>
+                                        </form>
+                                        <a asp-action="Editar" asp-route-id="@item.Id" class="btn btn-sm btn-outline-primary">Editar</a>
+                                        <form asp-action="Excluir" asp-route-id="@item.Id" method="post" class="d-inline"
+                                              onsubmit="return confirm('Deseja realmente excluir este produto?');">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
