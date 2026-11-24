@@ -1,0 +1,11 @@
+@model LojaDoces.ViewModels.FornecedorViewModel
+@{ ViewData["Title"] = "Editar fornecedor"; }
+
+<h1>Editar fornecedor</h1>
+<form asp-action="Edit" asp-route-id="@Model.Id" method="post">
+    <partial name="_Form" model="Model" />
+    <button type="submit" class="btn btn-primary">Salvar</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

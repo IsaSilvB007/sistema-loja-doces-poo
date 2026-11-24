@@ -1,0 +1,28 @@
+@model IEnumerable<LojaDoces.ViewModels.ClienteViewModel>
+@{ ViewData["Title"] = "Clientes"; }
+
+<h1>Clientes</h1>
+<a asp-action="Create" class="btn btn-primary mb-3">Novo cliente</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr><th>Nome</th><th>E-mail</th><th>Telefone</th><th>CPF</th><th>Tipo</th><th></th></tr>
+    </thead>
+    <tbody>
+    @foreach (var c in Model)
+    {
+        <tr>
+            <td>@c.Nome</td>
+            <td>@c.Email</td>
+            <td>@c.Telefone</td>
+            <td>@c.Cpf</td>
+            <td>@c.Tipo</td>
+            <td>
+                <a asp-action="Details" asp-route-id="@c.Id">Detalhes</a> |
+                <a asp-action="Edit" asp-route-id="@c.Id">Editar</a> |
+                <a asp-action="Delete" asp-route-id="@c.Id">Excluir</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
