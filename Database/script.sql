@@ -36,8 +36,9 @@ CREATE TABLE IF NOT EXISTS Clientes(
 INSERT OR IGNORE INTO Categorias (Nome) VALUES
     ('Bombons'), 
     ('Bolos'), 
-    ('Balas'), 
-    ('Tortas');
+    ('Balas'),
+    ('Tortas'),
+    ('Cookies');
 
 -- Insert para Fornecedores
 INSERT OR IGNORE INTO Fornecedores (Nome, Cnpj, Email, Telefone) VALUES
@@ -71,8 +72,8 @@ CREATE TABLE IF NOT EXISTS Pedidos(
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     ClienteId INTEGER NOT NULL,
     DataPedido TEXT NOT NULL,
-    Status TEXT NOT NULL,
-    FormaPagamento TEXT NOT NULL CHECK(FormaPagamento IN('Pix', 'Cartão - Débito', 'Cartão - Crédito', 'Dinheiro')),
+    Status INTEGER NOT NULL DEFAULT 1,
+    FormaPagamento TEXT CHECK(FormaPagamento IS NULL OR FormaPagamento IN ('Pix','Cartão - Débito','Cartão - Crédito','Dinheiro')),
     FOREIGN KEY (ClienteId) REFERENCES Clientes(Id)
 );
 
@@ -89,8 +90,30 @@ CREATE TABLE IF NOT EXISTS ItensPedido(
     Id INTEGER PRIMARY KEY AUTOINCREMENT,
     PedidoId INTEGER NOT NULL,
     ProdutoId INTEGER NOT NULL,
-    Quantidade REAL NOT NULL,
+    Quantidade INTEGER NOT NULL,
     PrecoUnitario REAL NOT NULL,
     FOREIGN KEY (PedidoId) REFERENCES Pedidos(Id),
     FOREIGN KEY (ProdutoId) REFERENCES Produtos(Id)
 );
+
+INSERT OR IGNORE INTO Produtos (Nome, Tipo, Preco, Estoque, CategoriaId, FornecedorId) VALUES
+ ('Brigadeiro Gourmet','DoceUnitario',4.50,100,1,1),
+ ('Bala de Goma (kg)','DocePorPeso',38.00,20,3,2),
+ ('Fatia de Bolo de Cenoura','DoceUnitario',9.00,30,2,5),
+ ('Torta de Limão','DoceUnitario',12.00,15,4,5),
+ ('Bombom Sortido (kg)','DocePorPeso',65.00,10,1,3),
+ ('Kit Presente Doçura','KitPresente',45.00,12,1,1),
+ ('Kit Festa','KitPresente',80.00,8,1,1);
+
+INSERT OR IGNORE INTO Pedidos (ClienteId, DataPedido, Status, FormaPagamento) VALUES
+ (1,'2026-11-10 14:30:00',2,'Pix'),
+ (2,'2026-11-11 10:15:00',2,'Cartão - Crédito'),
+ (3,'2026-11-12 16:40:00',1,NULL),
+ (4,'2026-11-13 09:05:00',3,NULL),
+ (5,'2026-11-14 18:20:00',2,'Dinheiro');
+
+INSERT OR IGNORE INTO ItensPedido (PedidoId, ProdutoId, Quantidade, PrecoUnitario) VALUES
+ (1,1,10,4.50),(1,3,2,9.00),(2,6,1,45.00),(3,4,1,12.00),(3,1,5,4.50),(5,2,1,38.00);
+
+INSERT OR IGNORE INTO KitItens (KitId, ProdutoId, Quantidade) VALUES
+ (6,1,6),(6,3,1),(7,1,20),(7,4,1),(7,2,1);
