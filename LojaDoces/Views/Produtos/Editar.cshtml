@@ -1,0 +1,72 @@
+@model LojaDoces.Models.Produto
+@{
+    ViewData["Title"] = "Editar Produto";
+    var precoExibido = ViewBag.PrecoOverride is string pOverride ? pOverride : Model.Preco.ToString("0.00");
+    var estoqueExibido = ViewBag.EstoqueOverride is string eOverride ? eOverride : Model.Estoque.ToString("0.##");
+}
+
+<div class="container py-4" style="max-width: 720px;">
+    <h2 class="mb-3">Editar Produto</h2>
+
+    @if (TempData["MensagemErro"] is string erroMsg)
+    {
+        <div class="alert alert-danger" role="alert">
+            <strong>Atenção:</strong> @erroMsg
+        </div>
+    }
+
+    <div class="card shadow-sm border-0 rounded-4 p-4">
+        <form asp-action="Editar" asp-route-id="@Model.Id" method="post">
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label for="nome" class="form-label fw-semibold">Nome</label>
+                <input type="text" id="nome" name="nome" value="@Model.Nome" class="form-control" required />
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-6">
+                    <label for="tipo" class="form-label fw-semibold">Tipo (Polimorfismo)</label>
+                    <select id="tipo" name="tipo" class="form-select" required>
+                        <option value="DoceUnitario" selected="@(Model.Tipo == "DoceUnitario")">DoceUnitario</option>
+                        <option value="DocePorPeso" selected="@(Model.Tipo == "DocePorPeso")">DocePorPeso</option>
+                        <option value="KitPresente" selected="@(Model.Tipo == "KitPresente")">KitPresente</option>
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="preco" class="form-label fw-semibold">Preço Base</label>
+                    <input type="text" inputmode="decimal" id="preco" name="preco" value="@precoExibido"
+                           placeholder="3,50" class="form-control" required />
+                </div>
+
+                <div class="col-md-3">
+                    <label for="estoque" class="form-label fw-semibold">Estoque</label>
+                    <input type="text" inputmode="decimal" id="estoque" name="estoque" value="@estoqueExibido"
+                           placeholder="30" class="form-control" required />
+                </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label for="categoriaId" class="form-label fw-semibold">Categoria</label>
+                    <select id="categoriaId" name="categoriaId" asp-items="ViewBag.CategoriasSelect" class="form-select" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="fornecedorId" class="form-label fw-semibold">Fornecedor</label>
+                    <select id="fornecedorId" name="fornecedorId" asp-items="ViewBag.FornecedoresSelect" class="form-select" required>
+                        <option value="">Selecione...</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Atualizar</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Voltar</a>
+            </div>
+        </form>
+    </div>
+</div>
