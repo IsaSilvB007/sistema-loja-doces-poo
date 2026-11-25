@@ -31,18 +31,18 @@ public class PedidoRepository : IPedidoRepository
 
     public PedidoRepository(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString("DefaultConnection")
+        _connectionString = configuration.GetConnectionString("SqliteConnection")
             ?? throw new InvalidOperationException("Connection string não configurada.");
     }
 
     private IDbConnection CriarConexao() => new SqliteConnection(_connectionString);
 
     private const string SqlBase = @"
-        SELECT p.Id, p.ClienteId, p.DataCriacao, p.Status,
+        SELECT p.Id, p.ClienteId, p.DataPedido AS DataCriacao, p.Status,
                i.Id AS ItemId, i.ProdutoId, pr.Nome AS NomeProduto, i.Quantidade, i.PrecoUnitario
-        FROM Pedido p
-        LEFT JOIN ItemPedido i ON i.PedidoId = p.Id
-        LEFT JOIN Produto pr ON pr.Id = i.ProdutoId";
+        FROM Pedidos p
+        LEFT JOIN ItensPedido i ON i.PedidoId = p.Id
+        LEFT JOIN Produtos pr ON pr.Id = i.ProdutoId";
 
     private const string SqlTodos = SqlBase + " ORDER BY p.Id DESC, i.Id";
     private const string SqlPorId = SqlBase + " WHERE p.Id = @Id ORDER BY i.Id";
@@ -80,18 +80,43 @@ public class PedidoRepository : IPedidoRepository
 
     public int Criar(Pedido pedido)
     {
-        const string sql = @"
-            INSERT INTO Pedido (ClienteId, DataCriacao, Status)
-            VALUES (@ClienteId, @DataCriacao, @Status);
-            SELECT CAST(SCOPE_IDENTITY() AS INT);"; 
-
         using var conn = CriarConexao();
-        return conn.ExecuteScalar<int>(sql, new
+        conn.Open();
+        using var tx = conn.BeginTransaction();
+        try
         {
-            pedido.ClienteId,
-            pedido.DataCriacao,
-            Status = (int)pedido.Status
-        });
+            var id = conn.ExecuteScalar<int>(@"
+                INSERT INTO Pedidos (ClienteId, DataPedido, Status)
+                VALUES (@ClienteId, @DataCriacao, @Status);
+                SELECT last_insert_rowid();",
+                new
+                {
+                    pedido.ClienteId,
+                    pedido.DataCriacao,
+                    Status = (int)pedido.Status
+                }, tx);
+
+            if (pedido.Itens.Any())
+            {
+                conn.Execute(@"INSERT INTO ItensPedido (PedidoId, ProdutoId, Quantidade, PrecoUnitario)
+                               VALUES (@PedidoId, @ProdutoId, @Quantidade, @PrecoUnitario)",
+                    pedido.Itens.Select(i => new
+                    {
+                        PedidoId = id,
+                        i.ProdutoId,
+                        i.Quantidade,
+                        i.PrecoUnitario
+                    }), tx);
+            }
+
+            tx.Commit();
+            return id;
+        }
+        catch
+        {
+            tx.Rollback();
+            throw;
+        }
     }
 
     public void Adicionar(Pedido pedido) => Criar(pedido);
@@ -103,12 +128,12 @@ public class PedidoRepository : IPedidoRepository
         using var tx = conn.BeginTransaction();
         try
         {
-            conn.Execute("UPDATE Pedido SET Status = @Status WHERE Id = @Id",
+            conn.Execute("UPDATE Pedidos SET Status = @Status WHERE Id = @Id",
                 new { Status = (int)pedido.Status, pedido.Id }, tx);
 
-            conn.Execute("DELETE FROM ItemPedido WHERE PedidoId = @Id", new { pedido.Id }, tx);
+            conn.Execute("DELETE FROM ItensPedido WHERE PedidoId = @Id", new { pedido.Id }, tx);
 
-            conn.Execute(@"INSERT INTO ItemPedido (PedidoId, ProdutoId, Quantidade, PrecoUnitario)
+            conn.Execute(@"INSERT INTO ItensPedido (PedidoId, ProdutoId, Quantidade, PrecoUnitario)
                            VALUES (@PedidoId, @ProdutoId, @Quantidade, @PrecoUnitario)",
                 pedido.Itens.Select(i => new
                 {
@@ -134,8 +159,8 @@ public class PedidoRepository : IPedidoRepository
         using var tx = conn.BeginTransaction();
         try
         {
-            conn.Execute("DELETE FROM ItemPedido WHERE PedidoId = @Id", new { Id = id }, tx);
-            conn.Execute("DELETE FROM Pedido WHERE Id = @Id", new { Id = id }, tx);
+            conn.Execute("DELETE FROM ItensPedido WHERE PedidoId = @Id", new { Id = id }, tx);
+            conn.Execute("DELETE FROM Pedidos WHERE Id = @Id", new { Id = id }, tx);
             tx.Commit();
         }
         catch
