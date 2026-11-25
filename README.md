@@ -63,7 +63,7 @@ Para garantir consistência nos dados diretamente na camada de persistência (SQ
 1. Clone o repositório e entre na pasta raiz:
 
 ```bash
-git clone https://github.com/IsaSilvB007/sistema-loja-doces-poo.git
+git clone [https://github.com/IsaSilvB007/sistema-loja-doces-poo.git](https://github.com/IsaSilvB007/sistema-loja-doces-poo.git)
 cd sistema-loja-doces-poo
 ```
 
@@ -98,9 +98,8 @@ dotnet run
 
 ## 👥 Integrantes do Grupo
 
-| Papel | Integrante | RA | Responsabilidades |
-| :--- | :--- | :--- | :--- |
-| **Pessoa A** | Isadora da Silva Bispo | 2840482511006 | Modelagem UML, Banco de Dados (`script.sql`), `Cliente`, `IRepository<T>` e Repositórios de `Categoria`, `Cliente` e `Fornecedor` |
-| **Pessoa B** | Mariana Cristina dos Santos | 2840482511038 | Models de `Categoria` e `Fornecedor`, configuração (`Program.cs`) e Controllers/Views do catálogo |
-| **Pessoa C** | Maria Fernanda Ribeiro Tavares | 2840482511041 | Models de `Pedido` e `ItemPedido`, Repositório de Pedidos e Controllers/Views do fluxo de vendas |
-| **Pessoa D** | Lívia Campanholo | 2840482521041 | Hierarquia de `Produto` (`DoceUnitario`, `DocePorPeso`, `KitPresente`), Repositório de Produtos e Controllers/Views |
+| Integrante | RA | Responsabilidades |
+| :--- | :--- | :--- |
+| Isadora da Silva Bispo | 2840482511006 | Modelagem UML, Banco de Dados (`script.sql`), `Cliente`, hierarquia de `Produto` (`DoceUnitario`, `DocePorPeso`, `KitPresente`), `IRepository<T>` e Repositórios (`Categoria`, `Cliente`, `Fornecedor` e `Produto`) |
+| Mariana Cristina dos Santos | 2840482511038 | Models de `Categoria` e `Fornecedor`, configuração (`Program.cs`) e Controllers/Views de início, catálogo e produtos |
+| Maria Fernanda Ribeiro Tavares | 2840482511041 | Models de `Pedido` e `ItemPedido`, Repositório de Pedidos e Controllers/Views do fluxo de vendas e clientes |
